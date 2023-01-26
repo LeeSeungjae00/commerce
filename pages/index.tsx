@@ -7,10 +7,18 @@ import { useEffect, useRef, useState } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
-  const [products, setProducts] = useState<{ id: string; properties: { id: string }[] }[]>([]);
+  // const [products, setProducts] = useState<{ id: string; properties: { id: string }[] }[]>([]);
+  const [products, setProducts] = useState<{ id: string; name: string }[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  // useEffect(() => {
+  //   fetch(`/api/get-items`)
+  //     .then(res => res.json())
+  //     .then(res => setProducts(res.items));
+  //   return () => {};
+  // }, []);
+
   useEffect(() => {
-    fetch(`/api/get-items`)
+    fetch(`/api/get-products`)
       .then(res => res.json())
       .then(res => setProducts(res.items));
     return () => {};
@@ -39,7 +47,7 @@ export default function Home() {
           <input type="text" ref={inputRef} placeholder="name" />
           <button onClick={handleClick}>Add Jacket</button>
           <div>
-            <p>Product List</p>
+            {/* <p>Product List</p>
             {products &&
               products.map(item => (
                 <div key={item.id}>
@@ -60,7 +68,9 @@ export default function Home() {
                   <br />
                   <br />
                 </div>
-              ))}
+              ))} */}
+
+            {products && products.map(item => <div key={item.id}>{item.name}</div>)}
           </div>
         </div>
       </main>
