@@ -7,8 +7,6 @@ const prisma = new PrismaClient();
 async function getProducts() {
   try {
     const response = prisma.products.findMany();
-
-    console.log(response);
     return response;
   } catch (e) {
     console.error(JSON.stringify(e));

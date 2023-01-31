@@ -1,5 +1,10 @@
+import styled from '@emotion/styled';
 import React from 'react';
 
-export default function Button() {
-  return <div>Button</div>;
-}
+const Button = styled.button`
+  padding: 16px;
+  border-radius: 8px;
+  background-color: pink;
+`;
+
+export default Button;

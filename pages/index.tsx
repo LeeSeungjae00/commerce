@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { Inter } from '@next/font/google';
 import styles from 'styles/Home.module.css';
 import { useEffect, useRef, useState } from 'react';
+import { css } from '@emotion/react';
+import Button from '@/components/Button';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -50,7 +52,18 @@ export default function Home() {
             ref={inputRef}
             placeholder="name"
           />
-          <button onClick={handleClick}>Add Jacket</button>
+          <button
+            css={css`
+              background-color: pink;
+              padding: 16px;
+              border-radius: 8px;
+            `}
+            onClick={handleClick}
+          >
+            Add Jacket
+          </button>
+
+          <Button onClick={handleClick}>Add Jacket</Button>
           <div>
             {/* <p>Product List</p>
             {products &&

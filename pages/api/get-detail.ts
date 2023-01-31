@@ -14,7 +14,6 @@ async function getDetail(pageId: string, propertyId: string) {
       page_id: pageId,
       property_id: propertyId,
     });
-    console.log(response);
     return response;
   } catch (e) {
     console.error(JSON.stringify(e));

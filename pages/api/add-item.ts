@@ -23,7 +23,6 @@ async function addItem(name: string) {
         ],
       },
     });
-    console.log(response);
   } catch (e) {
     console.error(JSON.stringify(e));
   }

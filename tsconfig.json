@@ -23,7 +23,10 @@
       "@/components/*": [
         "components/*"
       ]
-    }
+    },
+    "types": [
+      "@emotion/react/types/css-prop"
+    ]
   },
   "include": [
     "next-env.d.ts",
