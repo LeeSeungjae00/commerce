@@ -1,33 +1,43 @@
 import { useCallback, useEffect, useState } from 'react';
-import { products } from '@prisma/client';
+import { categories, products } from '@prisma/client';
 import Image from 'next/image';
-import { Pagination } from '@mantine/core';
+import { Pagination, SegmentedControl, SegmentedControlItem } from '@mantine/core';
 import { CATEGORY_MAP, TAKE } from 'constants/products';
 
 export default function Products() {
   const [activePage, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [products, setProducts] = useState<products[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('-1');
+  const [categories, setCategories] = useState<SegmentedControlItem[]>([]);
 
   useEffect(() => {
-    fetch(`/api/get-products-count`)
+    fetch(`/api/get-categories`)
       .then(res => res.json())
-      .then(res => setTotal(Math.ceil(res.items / TAKE)));
-    fetch(`/api/get-products?skip=0&take=${TAKE}`)
-      .then(res => res.json())
-      .then(res => setProducts(res.items));
-    return () => {};
+      .then(res => setCategories(res.items.map((item: categories) => ({ label: item.name, value: item.id.toString() }))));
   }, []);
 
   useEffect(() => {
+    fetch(`/api/get-products-count?category=${selectedCategory}`)
+      .then(res => res.json())
+      .then(res => setTotal(Math.ceil(res.items / TAKE)));
+    return () => {};
+  }, [selectedCategory]);
+
+  useEffect(() => {
     const skip = TAKE * (activePage - 1);
-    fetch(`/api/get-products?skip=${skip}&take=${TAKE}`)
+    fetch(`/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}`)
       .then(res => res.json())
       .then(res => setProducts(res.items));
-  }, [activePage]);
+  }, [activePage, selectedCategory]);
 
   return (
     <div className="px-36 mt-36 mb-36">
+      {categories && (
+        <div className="w-full flex mb-5">
+          <SegmentedControl value={selectedCategory} onChange={setSelectedCategory} data={[{ label: 'ALL', value: '-1' }, ...categories]} color="dark" />
+        </div>
+      )}
       <div className="grid grid-cols-3 gap-5">
         {products &&
           products.map(item => (
@@ -45,12 +55,12 @@ export default function Products() {
                 <span>{item.name}</span>
                 <span className="ml-auto">{item.price.toLocaleString('ko-KR')}원</span>
               </div>
-              <span className="text-zinc-400">{CATEGORY_MAP[item.category_id]}</span>
+              <span className="text-zinc-400">{CATEGORY_MAP[item.category_id - 1]}</span>
             </div>
           ))}
       </div>
       <div className="w-full flex mt-5">
-        <Pagination className="m-auto" page={activePage} onChange={setPage} total={10} />
+        <Pagination className="m-auto" page={activePage} onChange={setPage} total={total} />
       </div>
     </div>
   );

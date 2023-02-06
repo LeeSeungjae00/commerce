@@ -8,7 +8,7 @@ const productDate: Prisma.productsCreateInput[] = new Array(500).fill(0).map((_,
   contents: `{"blocks":[{"key":"7qk8k","text":"this a dark jean","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":7,"length":4,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"4mr5n","text":"Hello world ${
     index + 1
   } ","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,
-  image_url: `https://picsum.photos/id/${1000 + index}/1000/600/`,
+  image_url: `https://picsum.photos/id/${500 + index}/1000/600/`,
   price: Math.floor(Math.random() * (100000 - 20000)) + 20000,
 }));
 
