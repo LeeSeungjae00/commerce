@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { ChangeEventHandler, useCallback, useEffect, useState } from 'react';
 import { categories, products } from '@prisma/client';
 import Image from 'next/image';
-import { Pagination, SegmentedControl, SegmentedControlItem, Select } from '@mantine/core';
+import { Input, Pagination, SegmentedControl, SegmentedControlItem, Select } from '@mantine/core';
 import { CATEGORY_MAP, FILTERS, TAKE } from 'constants/products';
+import { IconSearch } from '@tabler/icons-react';
+import useDebounce from 'hooks/useDebounce';
 
 export default function Products() {
   const [activePage, setPage] = useState(1);
@@ -11,6 +13,9 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState<string>('-1');
   const [categories, setCategories] = useState<SegmentedControlItem[]>([]);
   const [selectedFilter, setFilter] = useState<string | null>(FILTERS[0].value);
+  const [keyword, setKeyword] = useState('');
+
+  const debouncedKeyword = useDebounce<string>(keyword, 300);
 
   useEffect(() => {
     fetch(`/api/get-categories`)
@@ -19,21 +24,28 @@ export default function Products() {
   }, []);
 
   useEffect(() => {
-    fetch(`/api/get-products-count?category=${selectedCategory}`)
+    fetch(`/api/get-products-count?category=${selectedCategory}&contains=${debouncedKeyword}`)
       .then(res => res.json())
       .then(res => setTotal(Math.ceil(res.items / TAKE)));
     return () => {};
-  }, [selectedCategory]);
+  }, [selectedCategory, debouncedKeyword]);
 
   useEffect(() => {
     const skip = TAKE * (activePage - 1);
-    fetch(`/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}`)
+    fetch(`/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debouncedKeyword}`)
       .then(res => res.json())
       .then(res => setProducts(res.items));
-  }, [activePage, selectedCategory, selectedFilter]);
+  }, [activePage, selectedCategory, selectedFilter, debouncedKeyword]);
+
+  const handleChage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
+  };
 
   return (
     <div className="px-36 mt-36 mb-36">
+      <div className="mb-4">
+        <Input icon={<IconSearch />} placeholder="검색할 단어" value={keyword} onChange={handleChage}></Input>
+      </div>
       <div className="mb-4">
         <Select data={FILTERS} value={selectedFilter} onChange={setFilter}></Select>
       </div>
