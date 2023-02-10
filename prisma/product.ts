@@ -2,9 +2,9 @@ import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const productDate: Prisma.productsCreateInput[] = new Array(100).fill(0).map((_, index) => ({
+const productDate: Prisma.productsCreateInput[] = new Array(500).fill(0).map((_, index) => ({
   name: `Dark Jean ${index + 1}`,
-  category_id: 1,
+  category_id: Math.floor((Math.random() * 1000) % 5) + 1,
   contents: `{"blocks":[{"key":"7qk8k","text":"this a dark jean","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":7,"length":4,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"4mr5n","text":"Hello world ${
     index + 1
   } ","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}`,

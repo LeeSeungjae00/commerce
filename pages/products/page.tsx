@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { products } from '@prisma/client';
 import Image from 'next/image';
 import { Pagination } from '@mantine/core';
+import { CATEGORY_MAP, TAKE } from 'constants/products';
 
-const TAKE = 9;
 export default function Products() {
   const [activePage, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -31,7 +31,7 @@ export default function Products() {
       <div className="grid grid-cols-3 gap-5">
         {products &&
           products.map(item => (
-            <div key={item.id}>
+            <div key={item.id} style={{ maxWidth: 310 }}>
               <Image
                 className="rounded"
                 alt={item.name}
@@ -45,7 +45,7 @@ export default function Products() {
                 <span>{item.name}</span>
                 <span className="ml-auto">{item.price.toLocaleString('ko-KR')}원</span>
               </div>
-              <span className="text-zinc-400">{item.category_id === 1 && '의류'}</span>
+              <span className="text-zinc-400">{CATEGORY_MAP[item.category_id]}</span>
             </div>
           ))}
       </div>
