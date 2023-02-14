@@ -5,7 +5,7 @@ import jwtDecode from 'jwt-decode';
 
 const prisma = new PrismaClient();
 
-async function signIn(credential: string) {
+async function signUp(credential: string) {
   const decoded: { name: string; email: string; picture: string } = jwtDecode(credential);
   try {
     const response = await prisma.user.upsert({
@@ -37,7 +37,7 @@ type res = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<res>) {
   const { credential } = req.query;
   try {
-    const items = await signIn(String(credential));
+    const items = await signUp(String(credential));
     res.status(200).json({ items, message: `Success` });
   } catch (error) {
     return res.status(400).json({ message: 'Fail' });
