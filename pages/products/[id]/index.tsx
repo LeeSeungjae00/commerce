@@ -1,79 +1,67 @@
 import CustomEditor from '@/components/Editor';
+import { products } from '@prisma/client';
+import { CATEGORY_MAP } from 'constants/products';
+import { format } from 'date-fns';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Carousel from 'nuka-carousel';
 import React, { useEffect, useState } from 'react';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
-const images = [
-  {
-    original: 'https://picsum.photos/id/1018/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1018/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1015/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1015/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1019/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1019/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1016/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1016/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1013/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1013/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1012/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1012/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1011/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1011/250/150/',
-  },
-];
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const product = await fetch(`http://localhost:3737/api/get-product?id=${context.params?.id}`)
+    .then(res => res.json())
+    .then(res => res.items);
 
-export default function Products() {
+  return {
+    props: { product: { ...product, images: [product.image_url, product.image_url] } },
+  };
+}
+
+export default function Product(props: { product: products & { images: string[] } }) {
   const [index, setIndex] = useState(0);
 
   const router = useRouter();
   const { id: productId } = router.query;
-  const [editorState, setEditorState] = useState<EditorState | undefined>(undefined);
-
-  useEffect(() => {
-    if (productId) {
-      fetch(`/api/get-product?id=${productId}`)
-        .then(res => res.json())
-        .then(res => {
-          if (res.items.contents) {
-            setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(res.items.contents))));
-          } else {
-            setEditorState(EditorState.createEmpty());
-          }
-        });
-    }
-    return () => {};
-  }, [productId]);
+  const [editorState] = useState<EditorState | undefined>(() =>
+    props.product?.contents ? EditorState.createWithContent(convertFromRaw(JSON.parse(props.product.contents))) : EditorState.createEmpty(),
+  );
+  const { product } = props;
 
   return (
     <>
-      <Carousel animation="fade" autoplay withoutControls wrapAround speed={10} slideIndex={index}>
-        {images.map(item => (
-          <Image key={item.original} src={item.original} alt="image" width={1000} height={600} layout="responsive"></Image>
-        ))}
-      </Carousel>
-      <div style={{ display: 'flex' }}>
-        {images.map((item, idx) => (
-          <div key={idx} onClick={() => setIndex(idx)}>
-            <Image src={item.original} alt="image" width={100} height={60}></Image>
+      {product != null && productId != null ? (
+        <>
+          <div className="p-24 flex flex-row">
+            <div style={{ maxWidth: 600, marginRight: 52 }}>
+              <Carousel animation="fade" autoplay withoutControls wrapAround speed={10} slideIndex={index}>
+                {product.images.map((url, idx) => (
+                  <Image key={`${url}-carousel-${idx}`} src={url} alt="image" width={600} height={360} layout="responsive"></Image>
+                ))}
+              </Carousel>
+
+              <div className="flex space-x-4 mt-2">
+                {product.images.map((url, idx) => (
+                  <div key={`${url}-thumb-${idx}`} onClick={() => setIndex(idx)}>
+                    <Image src={url} alt="image" width={100} height={60.16}></Image>
+                  </div>
+                ))}
+              </div>
+              {editorState != null && <CustomEditor editorState={editorState} readOnly></CustomEditor>}
+            </div>
+            <div style={{ maxWidth: 600 }} className="flex flex-col space-y-6">
+              <div className="text-lg text-zinc-400">{CATEGORY_MAP[product.category_id - 1]}</div>
+              <div className="text-4xl font-semibold">{product.name}</div>
+              <div className="text-lg">{product.price.toLocaleString('ko-kr')}원</div>
+              <div className="text-sm text-zinc-300">{format(new Date(product.createdAt), 'yyyy년 m월 d일')}</div>
+            </div>
           </div>
-        ))}
-      </div>
-      {editorState != null && <CustomEditor editorState={editorState} readOnly></CustomEditor>}
+        </>
+      ) : (
+        <div>로딩중</div>
+      )}
     </>
   );
 }
