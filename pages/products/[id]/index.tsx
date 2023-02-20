@@ -38,14 +38,29 @@ export default function Product(props: { product: products & { images: string[] 
             <div style={{ maxWidth: 600, marginRight: 52 }}>
               <Carousel animation="fade" autoplay withoutControls wrapAround speed={10} slideIndex={index}>
                 {product.images.map((url, idx) => (
-                  <Image key={`${url}-carousel-${idx}`} src={url} alt="image" width={600} height={360} layout="responsive"></Image>
+                  <Image
+                    key={`${url}-carousel-${idx}`}
+                    src={url}
+                    alt="image"
+                    width={600}
+                    height={360}
+                    placeholder="blur"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP0dPesBwADFAFamsrLhQAAAABJRU5ErkJggg=="
+                  ></Image>
                 ))}
               </Carousel>
 
               <div className="flex space-x-4 mt-2">
                 {product.images.map((url, idx) => (
                   <div key={`${url}-thumb-${idx}`} onClick={() => setIndex(idx)}>
-                    <Image src={url} alt="image" width={100} height={60.16}></Image>
+                    <Image
+                      src={url}
+                      alt="image"
+                      width={100}
+                      height={60.16}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP0dPesBwADFAFamsrLhQAAAABJRU5ErkJggg=="
+                    ></Image>
                   </div>
                 ))}
               </div>
