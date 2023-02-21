@@ -2,7 +2,7 @@ import CustomEditor from '@/components/Editor';
 import { Button } from '@mantine/core';
 import { products } from '@prisma/client';
 import { IconHeart, IconHeartBroken, IconHeartFilled, IconHeartbeat } from '@tabler/icons-react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORY_MAP } from 'constants/products';
 import { format } from 'date-fns';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
@@ -31,6 +31,7 @@ export default function Product(props: { product: products & { images: string[] 
   const { data: session } = useSession();
 
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { id: productId } = router.query;
   const [editorState] = useState<EditorState | undefined>(() =>
     props.product?.contents ? EditorState.createWithContent(convertFromRaw(JSON.parse(props.product.contents))) : EditorState.createEmpty(),
@@ -42,16 +43,38 @@ export default function Product(props: { product: products & { images: string[] 
       .then(res => res.items),
   );
 
-  const { mutate } = useMutation((productId: string) =>
-    fetch(`/api/update-wishlist`, {
-      method: 'POST',
-      body: JSON.stringify({ productId }),
-    }).then(data => data.json().then(res => res.items)),
+  const { mutate, isLoading } = useMutation<unknown, unknown, string>(
+    (productId: string) =>
+      fetch(`/api/update-wishlist`, {
+        method: 'POST',
+        body: JSON.stringify({ productId }),
+      }).then(data => data.json().then(res => res.items)),
+    {
+      onMutate: async productId => {
+        await queryClient.cancelQueries({ queryKey: [WISHLIST_QUERYKEY] });
+
+        const previousTodos = queryClient.getQueryData([WISHLIST_QUERYKEY]);
+
+        queryClient.setQueryData<string[]>([WISHLIST_QUERYKEY], old => {
+          if (!old) return [];
+          if (old.includes(productId)) {
+            return old.filter(item => item != productId);
+          } else {
+            return [...old, productId];
+          }
+        });
+
+        return { previousTodos };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries([WISHLIST_QUERYKEY]);
+      },
+    },
   );
 
   const { product } = props;
 
-  const isWished = wishlist ? wishlist.includes(productId) : false;
+  const isWished = wishlist != null && productId != null ? wishlist.includes(productId) : false;
 
   return (
     <>
@@ -93,8 +116,8 @@ export default function Product(props: { product: products & { images: string[] 
               <div className="text-lg text-zinc-400">{CATEGORY_MAP[product.category_id - 1]}</div>
               <div className="text-4xl font-semibold">{product.name}</div>
               <div className="text-lg">{product.price.toLocaleString('ko-kr')}원</div>
-              <>{wishlist}</>
               <Button
+                // loading={isLoading}
                 leftIcon={isWished ? <IconHeartFilled></IconHeartFilled> : <IconHeart></IconHeart>}
                 style={{ backgroundColor: isWished ? 'red' : 'gray' }}
                 radius="xl"
