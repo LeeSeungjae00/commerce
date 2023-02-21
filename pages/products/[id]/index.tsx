@@ -43,7 +43,7 @@ export default function Product(props: { product: products & { images: string[] 
       .then(res => res.items),
   );
 
-  const { mutate, isLoading } = useMutation<unknown, unknown, string>(
+  const { mutate, isLoading } = useMutation<unknown, unknown, string, any>(
     (productId: string) =>
       fetch(`/api/update-wishlist`, {
         method: 'POST',
@@ -53,7 +53,7 @@ export default function Product(props: { product: products & { images: string[] 
       onMutate: async productId => {
         await queryClient.cancelQueries({ queryKey: [WISHLIST_QUERYKEY] });
 
-        const previousTodos = queryClient.getQueryData([WISHLIST_QUERYKEY]);
+        const previous = queryClient.getQueryData([WISHLIST_QUERYKEY]);
 
         queryClient.setQueryData<string[]>([WISHLIST_QUERYKEY], old => {
           if (!old) return [];
@@ -64,7 +64,10 @@ export default function Product(props: { product: products & { images: string[] 
           }
         });
 
-        return { previousTodos };
+        return { previous };
+      },
+      onError: (error, _, context) => {
+        queryClient.setQueriesData([WISHLIST_QUERYKEY], context.previous);
       },
       onSuccess: () => {
         queryClient.invalidateQueries([WISHLIST_QUERYKEY]);
@@ -82,7 +85,7 @@ export default function Product(props: { product: products & { images: string[] 
         <>
           <div className="p-24 flex flex-row">
             <div style={{ maxWidth: 600, marginRight: 52 }}>
-              <Carousel animation="fade" autoplay withoutControls wrapAround speed={10} slideIndex={index}>
+              <Carousel animation="fade" withoutControls wrapAround speed={10} slideIndex={index}>
                 {product.images.map((url, idx) => (
                   <Image
                     key={`${url}-carousel-${idx}`}
@@ -117,6 +120,7 @@ export default function Product(props: { product: products & { images: string[] 
               <div className="text-4xl font-semibold">{product.name}</div>
               <div className="text-lg">{product.price.toLocaleString('ko-kr')}원</div>
               <Button
+                disabled={!wishlist}
                 // loading={isLoading}
                 leftIcon={isWished ? <IconHeartFilled></IconHeartFilled> : <IconHeart></IconHeart>}
                 style={{ backgroundColor: isWished ? 'red' : 'gray' }}
