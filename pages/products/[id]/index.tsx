@@ -1,3 +1,4 @@
+import CountControl from '@/components/CountControl';
 import CustomEditor from '@/components/Editor';
 import { Button } from '@mantine/core';
 import { products } from '@prisma/client';
@@ -29,6 +30,7 @@ const WISHLIST_QUERYKEY = '/api/get-wishlist';
 export default function Product(props: { product: products & { images: string[] } }) {
   const [index, setIndex] = useState(0);
   const { data: session } = useSession();
+  const [quantity, setQintity] = useState<number | undefined>(1);
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -76,6 +78,10 @@ export default function Product(props: { product: products & { images: string[] 
   );
 
   const validate = (type: 'cart' | 'order') => {
+    if (quantity == null) {
+      alert('최소 수량을 선택 하세요.');
+      return;
+    }
     alert('장바구니로 이동');
     router.push('/cart');
   };
@@ -124,6 +130,9 @@ export default function Product(props: { product: products & { images: string[] 
               <div className="text-lg text-zinc-400">{CATEGORY_MAP[product.category_id - 1]}</div>
               <div className="text-4xl font-semibold">{product.name}</div>
               <div className="text-lg">{product.price.toLocaleString('ko-kr')}원</div>
+              <div>
+                <CountControl min={1} max={200} value={quantity} setValue={setQintity}></CountControl>
+              </div>
               <div className="flex space-x-3">
                 <Button
                   leftIcon={<IconShoppingCart></IconShoppingCart>}
