@@ -1,7 +1,7 @@
 import CustomEditor from '@/components/Editor';
 import { Button } from '@mantine/core';
 import { products } from '@prisma/client';
-import { IconHeart, IconHeartBroken, IconHeartFilled, IconHeartbeat } from '@tabler/icons-react';
+import { IconHeart, IconHeartBroken, IconHeartFilled, IconHeartbeat, IconShoppingCart } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORY_MAP } from 'constants/products';
 import { format } from 'date-fns';
@@ -75,6 +75,11 @@ export default function Product(props: { product: products & { images: string[] 
     },
   );
 
+  const validate = (type: 'cart' | 'order') => {
+    alert('장바구니로 이동');
+    router.push('/cart');
+  };
+
   const { product } = props;
 
   const isWished = wishlist != null && productId != null ? wishlist.includes(productId) : false;
@@ -83,7 +88,7 @@ export default function Product(props: { product: products & { images: string[] 
     <>
       {product != null && productId != null ? (
         <>
-          <div className="p-24 flex flex-row">
+          <div className="flex flex-row">
             <div style={{ maxWidth: 600, marginRight: 52 }}>
               <Carousel animation="fade" withoutControls wrapAround speed={10} slideIndex={index}>
                 {product.images.map((url, idx) => (
@@ -119,27 +124,48 @@ export default function Product(props: { product: products & { images: string[] 
               <div className="text-lg text-zinc-400">{CATEGORY_MAP[product.category_id - 1]}</div>
               <div className="text-4xl font-semibold">{product.name}</div>
               <div className="text-lg">{product.price.toLocaleString('ko-kr')}원</div>
-              <Button
-                disabled={!wishlist}
-                // loading={isLoading}
-                leftIcon={isWished ? <IconHeartFilled></IconHeartFilled> : <IconHeart></IconHeart>}
-                style={{ backgroundColor: isWished ? 'red' : 'gray' }}
-                radius="xl"
-                size="md"
-                styles={{
-                  root: { paddingRight: 14, height: 48 },
-                }}
-                onClick={() => {
-                  if (session == null) {
-                    alert('로그인이 필요합니다');
-                    router.push(`/auth/login`);
-                    return;
-                  }
-                  mutate(String(productId));
-                }}
-              >
-                찜하기
-              </Button>
+              <div className="flex space-x-3">
+                <Button
+                  leftIcon={<IconShoppingCart></IconShoppingCart>}
+                  style={{ backgroundColor: 'black' }}
+                  radius="xl"
+                  size="md"
+                  styles={{
+                    root: { paddingRight: 14, height: 48 },
+                  }}
+                  onClick={() => {
+                    if (session == null) {
+                      alert('로그인이 필요합니다');
+                      router.push(`/auth/login`);
+                      return;
+                    }
+                    validate('cart');
+                  }}
+                >
+                  장바구니
+                </Button>
+                <Button
+                  disabled={!wishlist}
+                  // loading={isLoading}
+                  leftIcon={isWished ? <IconHeartFilled></IconHeartFilled> : <IconHeart></IconHeart>}
+                  style={{ backgroundColor: isWished ? 'red' : 'gray' }}
+                  radius="xl"
+                  size="md"
+                  styles={{
+                    root: { paddingRight: 14, height: 48 },
+                  }}
+                  onClick={() => {
+                    if (session == null) {
+                      alert('로그인이 필요합니다');
+                      router.push(`/auth/login`);
+                      return;
+                    }
+                    mutate(String(productId));
+                  }}
+                >
+                  찜하기
+                </Button>
+              </div>
               <div className="text-sm text-zinc-300">등록: {format(new Date(product.createdAt), 'yyyy년 m월 d일')}</div>
             </div>
           </div>

@@ -26,7 +26,7 @@ export default function Products() {
   }, [skip]);
 
   return (
-    <div className="px-36 mt-36 mb-36">
+    <div className="mt-36 mb-36">
       <div className="grid grid-cols-3 gap-5">
         {products &&
           products.map(item => (

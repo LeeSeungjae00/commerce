@@ -2,7 +2,7 @@ import GoogleLogin from '@/components/GoogleLogin';
 
 export default function Login() {
   return (
-    <div className="flex w-screen h-screen items-center justify-center">
+    <div className="flex items-center justify-center">
       <GoogleLogin></GoogleLogin>
     </div>
   );
