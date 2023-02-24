@@ -1,7 +1,12 @@
 import CountControl from '@/components/CountControl';
 import styled from '@emotion/styled';
+import { Button } from '@mantine/core';
+import { products } from '@prisma/client';
 import { IconRefresh, IconX } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { CATEGORY_MAP, TAKE } from 'constants/products';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 
 interface CartItem {
@@ -14,6 +19,7 @@ interface CartItem {
 }
 
 export default function Cart() {
+  const router = useRouter();
   const [data, setData] = useState<CartItem[]>([]);
   const amount = useMemo(() => {
     return data.map(item => item.amount).reduce((pre, cur) => pre + cur, 0);
@@ -25,7 +31,7 @@ export default function Cart() {
     const mockData: CartItem[] = [
       {
         name: '나이키 신발',
-        productId: 100,
+        productId: 502,
         price: 20000,
         quantity: 2,
         amount: 20000,
@@ -33,7 +39,7 @@ export default function Cart() {
       },
       {
         name: '나이키 빌딩',
-        productId: 111,
+        productId: 501,
         price: 51151,
         quantity: 2,
         amount: 102302,
@@ -44,14 +50,25 @@ export default function Cart() {
     setData(mockData);
   }, []);
 
+  const { data: products } = useQuery<{ items: products[] }, unknown, products[]>(
+    [`/api/get-products?skip=0&take=3`],
+    () => fetch(`/api/get-products?skip=0&take=3`).then(res => res.json()),
+    {
+      select: data => data.items,
+    },
+  );
+
+  const handleOrder = () => {
+    // TODO: 구매하기 기능 구현
+    alert(`장바구니 구매 ${JSON.stringify(data)}`);
+  };
+
   return (
     <div>
       <span className="text-2xl mb-3">Cart ({data.length})</span>
       <div className="flex">
         <div className="flex flex-col p-4 space-y-4 flex-1">
-          {data.map((item, idx) => (
-            <Item key={idx} {...item}></Item>
-          ))}
+          {data.length > 0 ? data.map((item, idx) => <Item key={idx} {...item}></Item>) : <div>장바구니가 비었습니다.</div>}
         </div>
         <div className="px-4">
           <div className="flex flex-col p-4 space-y-4" style={{ minWidth: 300, border: '1px solid gray' }}>
@@ -72,7 +89,48 @@ export default function Cart() {
               <span className="font-semibold">결제 금액</span>
               <span className="font-semibold text-red-500">{(amount + dilveryAmount - discountAmount).toLocaleString('ko-kr')} 원</span>
             </Row>
+            <Button
+              style={{ backgroundColor: 'black' }}
+              radius="xl"
+              size="md"
+              styles={{
+                root: { paddingRight: 14, height: 48 },
+              }}
+              onClick={handleOrder}
+            >
+              구매하기
+            </Button>
           </div>
+        </div>
+      </div>
+      <div className="mt-32">
+        <p>추천상품</p>
+        <div className="grid grid-cols-3 gap-5">
+          {products &&
+            products.map(item => (
+              <div
+                key={item.id}
+                style={{ maxWidth: 310 }}
+                onClick={() => {
+                  router.push(`/products/${item.id}`);
+                }}
+              >
+                <Image
+                  className="rounded"
+                  alt={item.name}
+                  src={item.image_url ?? ''}
+                  width={300}
+                  height={200}
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP0dPesBwADFAFamsrLhQAAAABJRU5ErkJggg=="
+                ></Image>
+                <div className="flex">
+                  <span>{item.name}</span>
+                  <span className="ml-auto">{item.price.toLocaleString('ko-KR')}원</span>
+                </div>
+                <span className="text-zinc-400">{CATEGORY_MAP[item.category_id - 1]}</span>
+              </div>
+            ))}
         </div>
       </div>
     </div>
@@ -80,6 +138,7 @@ export default function Cart() {
 }
 
 const Item = (props: CartItem) => {
+  const router = useRouter();
   const [quantity, setQuantity] = useState<number | undefined>(props.quantity);
   const [amount, setAmount] = useState<number>(props.amount);
   useEffect(() => {
@@ -87,20 +146,31 @@ const Item = (props: CartItem) => {
       setAmount(quantity * props.price);
     }
   }, [quantity, props.price]);
+
+  const handleUpdate = () => {
+    // TODO: 장바구니에서 삭제 기능 구현
+    alert(`장바구니에서 ${props.name} 삭제`);
+  };
+
+  const handleDelete = () => {
+    // TODO: 장바구니에서 삭제 기능 구현
+    alert(`장바구니에서 ${props.name} 삭제`);
+  };
+
   return (
     <div className="flex w-full p-4 border-b-2">
-      <Image src={props.image_url} width={195} height={155} alt={props.name}></Image>
+      <Image src={props.image_url} width={195} height={155} alt={props.name} onClick={() => router.push(`/products/${props.productId}`)}></Image>
       <div className="flex flex-col ml-4">
         <span className="font-semibold mb-2">{props.name}</span>
         <span className="mb-auto">가격: {props.price.toLocaleString('ko-kr')} 원</span>
         <div className="flex items-center space-x-4">
           <CountControl value={quantity} setValue={setQuantity} max={20}></CountControl>
-          <IconRefresh></IconRefresh>
+          <IconRefresh onClick={handleUpdate}></IconRefresh>
         </div>
       </div>
       <div className="flex ml-auto space-x-4">
         <span>{amount.toLocaleString('ko-kr')} 원</span>
-        <IconX></IconX>
+        <IconX onClick={handleDelete}></IconX>
       </div>
     </div>
   );
