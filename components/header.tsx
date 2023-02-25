@@ -1,4 +1,4 @@
-import { IconHome, IconShoppingCart, IconUser } from '@tabler/icons-react';
+import { IconHeart, IconHome, IconShoppingCart, IconUser } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -11,6 +11,7 @@ export default function Header() {
       <div className="w-full flex h-50 items-center">
         <IconHome onClick={() => router.push('/')}></IconHome>
         <span className="m-auto"></span>
+        <IconHeart onClick={() => router.push('/wishlist')} className="mr-4"></IconHeart>
         <IconShoppingCart onClick={() => router.push('/cart')} className="mr-4"></IconShoppingCart>
         {session ? (
           <Image onClick={() => router.push('/my')} style={{ borderRadius: '50%' }} src={session.user?.image!} width={30} height={30} alt="profile" />
