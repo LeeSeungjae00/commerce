@@ -1,7 +1,7 @@
 import CountControl from '@/components/CountControl';
 import CustomEditor from '@/components/Editor';
 import { Button } from '@mantine/core';
-import { products } from '@prisma/client';
+import { Cart, products } from '@prisma/client';
 import { IconHeart, IconHeartBroken, IconHeartFilled, IconHeartbeat, IconShoppingCart } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORY_MAP } from 'constants/products';
@@ -77,12 +77,23 @@ export default function Product(props: { product: products & { images: string[] 
     },
   );
 
-  const validate = (type: 'cart' | 'order') => {
+  const { mutate: addCart } = useMutation<unknown, unknown, Omit<Cart | 'id', 'userId'>, any>(item =>
+    fetch(`/api/add-cart`, {
+      method: 'POST',
+      body: JSON.stringify({ item }),
+    }).then(data => data.json().then(res => res.items)),
+  );
+
+  const validate = async (type: 'cart' | 'order') => {
     if (quantity == null) {
       alert('최소 수량을 선택 하세요.');
       return;
     }
-    alert('장바구니로 이동');
+    addCart({
+      productId: product.id,
+      quantity: quantity,
+      amount: product.price * quantity,
+    });
     router.push('/cart');
   };
 
