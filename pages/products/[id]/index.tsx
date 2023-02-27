@@ -45,7 +45,7 @@ export default function Product(props: { product: products & { images: string[] 
       .then(res => res.items),
   );
 
-  const { mutate, isLoading } = useMutation<unknown, unknown, string, any>(
+  const { mutate } = useMutation<unknown, unknown, string, any>(
     (productId: string) =>
       fetch(`/api/update-wishlist`, {
         method: 'POST',
@@ -77,14 +77,20 @@ export default function Product(props: { product: products & { images: string[] 
     },
   );
 
-  const { mutate: addCart } = useMutation<unknown, unknown, Omit<Cart | 'id', 'userId'>, any>(item =>
-    fetch(`/api/add-cart`, {
-      method: 'POST',
-      body: JSON.stringify({ item }),
-    }).then(data => data.json().then(res => res.items)),
+  const { mutate: addCart } = useMutation<unknown, unknown, Omit<Cart | 'id', 'userId'>, any>(
+    item =>
+      fetch(`/api/add-cart`, {
+        method: 'POST',
+        body: JSON.stringify({ item }),
+      }).then(data => data.json().then(res => res.items)),
+    {
+      onSuccess: () => {
+        router.push('/cart');
+      },
+    },
   );
 
-  const validate = async (type: 'cart' | 'order') => {
+  const validate = (type: 'cart' | 'order') => {
     if (quantity == null) {
       alert('최소 수량을 선택 하세요.');
       return;
@@ -94,7 +100,6 @@ export default function Product(props: { product: products & { images: string[] 
       quantity: quantity,
       amount: product.price * quantity,
     });
-    router.push('/cart');
   };
 
   const { product } = props;
@@ -166,7 +171,6 @@ export default function Product(props: { product: products & { images: string[] 
                 </Button>
                 <Button
                   disabled={!wishlist}
-                  // loading={isLoading}
                   leftIcon={isWished ? <IconHeartFilled></IconHeartFilled> : <IconHeart></IconHeart>}
                   style={{ backgroundColor: isWished ? 'red' : 'gray' }}
                   radius="xl"
