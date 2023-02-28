@@ -3,9 +3,10 @@ import ProductList from '@/components/ProductList';
 import styled from '@emotion/styled';
 import { Button } from '@mantine/core';
 import { Cart as CartType, products } from '@prisma/client';
-import { IconRefresh, IconX } from '@tabler/icons-react';
+import { IconRefresh, IconShoppingCartOff, IconX } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORY_MAP, TAKE } from 'constants/products';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -19,6 +20,7 @@ interface CartItem extends CartType {
 const CART_QUERYKEY = `/api/get-cart`;
 
 export default function Cart() {
+  const session = useSession();
   const { data, isLoading } = useQuery<{ items: [] }, unknown, CartItem[]>([CART_QUERYKEY], () =>
     fetch(CART_QUERYKEY)
       .then(res => res.json())
@@ -27,6 +29,7 @@ export default function Cart() {
 
   const dilveryAmount = data && data.length > 0 ? 5000 : 0;
   const discountAmount = 0;
+  const router = useRouter();
 
   const amount = useMemo(() => {
     if (data == null) return 0;
@@ -50,14 +53,31 @@ export default function Cart() {
     <div>
       <span className="text-2xl mb-3">Cart ({data ? data.length : 0})</span>
       {isLoading ? (
-        <div>불러오는 중</div>
+        <div className="h-full w-full flex justify-center items-center">불러오는 중</div>
       ) : (
         <>
           {data ? (
             <>
               <div className="flex">
                 <div className="flex flex-col p-4 space-y-4 flex-1">
-                  {data.length > 0 ? data.map((item, idx) => <Item key={idx} {...item}></Item>) : <div>장바구니가 비었습니다.</div>}
+                  {data.length > 0 ? (
+                    data.map((item, idx) => <Item key={idx} {...item}></Item>)
+                  ) : (
+                    <>
+                      {session.data ? (
+                        <div className="h-full w-full flex justify-center items-center">
+                          <IconShoppingCartOff></IconShoppingCartOff> 장바구니가 비었습니다.
+                        </div>
+                      ) : (
+                        <div className="h-full w-full flex justify-center items-center flex-col">
+                          로그인이 필요합니다.
+                          <Button style={{ backgroundColor: 'black' }} radius="xl" size="md" onClick={() => router.push('/auth/login')}>
+                            로그인
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
                 <div className="px-4">
                   <div className="flex flex-col p-4 space-y-4" style={{ minWidth: 300, border: '1px solid gray' }}>
@@ -118,7 +138,7 @@ const Item = (props: CartItem) => {
     }
   }, [quantity, props.price]);
 
-  const { mutate } = useMutation<unknown, unknown, CartType, any>(
+  const { mutate: updateCart } = useMutation<unknown, unknown, CartType, any>(
     item =>
       fetch(`/api/update-cart`, {
         method: 'POST',
@@ -150,17 +170,42 @@ const Item = (props: CartItem) => {
     },
   );
 
+  const { mutate: deleteCart } = useMutation<unknown, unknown, number, any>(
+    item =>
+      fetch(`/api/delete-cart`, {
+        method: 'POST',
+        body: JSON.stringify({ id: props.id }),
+      }).then(data => data.json().then(res => res.items)),
+    {
+      onMutate: async id => {
+        await queryClient.cancelQueries({ queryKey: [CART_QUERYKEY] });
+
+        const previous = queryClient.getQueryData([CART_QUERYKEY]);
+
+        queryClient.setQueryData<CartType[]>([CART_QUERYKEY], old => old?.filter(c => c.id !== id));
+
+        return { previous };
+      },
+      onError: (error, _, context) => {
+        queryClient.setQueriesData([CART_QUERYKEY], context.previous);
+      },
+      onSuccess: data => {
+        queryClient.invalidateQueries([CART_QUERYKEY]);
+      },
+    },
+  );
+
   const handleUpdate = () => {
     if (quantity == null) {
       alert('최소 수량을 입력하세요.');
       return;
     }
-    mutate({ ...props, quantity, amount });
+    updateCart({ ...props, quantity, amount });
   };
 
   const handleDelete = () => {
     // TODO: 장바구니에서 삭제 기능 구현
-    alert(`장바구니에서 ${props.name} 삭제`);
+    deleteCart(props.id);
   };
 
   return (
