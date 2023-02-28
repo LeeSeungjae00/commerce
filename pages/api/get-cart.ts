@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 async function getCart(userId: string) {
   try {
     const cart = await prisma.$queryRaw`
-      SELECT c.id, userId, quantity, amount, price, name, image_url 
+      SELECT c.id, userId, quantity, amount, price, productId, name, image_url 
       from Cart as c JOIN products as p 
       WHERE c.productId = p.id AND c.userId=${userId}`;
 

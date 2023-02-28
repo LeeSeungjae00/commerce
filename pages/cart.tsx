@@ -17,7 +17,7 @@ interface CartItem extends CartType {
   image_url: string;
 }
 
-const CART_QUERYKEY = `/api/get-cart`;
+export const CART_QUERYKEY = `/api/get-cart`;
 
 export default function Cart() {
   const session = useSession();

@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Carousel from 'nuka-carousel';
+import { CART_QUERYKEY } from 'pages/cart';
 import React, { useEffect, useState } from 'react';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
@@ -84,6 +85,9 @@ export default function Product(props: { product: products & { images: string[] 
         body: JSON.stringify({ item }),
       }).then(data => data.json().then(res => res.items)),
     {
+      onMutate: () => {
+        queryClient.invalidateQueries([CART_QUERYKEY]);
+      },
       onSuccess: () => {
         router.push('/cart');
       },
@@ -95,11 +99,14 @@ export default function Product(props: { product: products & { images: string[] 
       alert('최소 수량을 선택 하세요.');
       return;
     }
-    addCart({
-      productId: product.id,
-      quantity: quantity,
-      amount: product.price * quantity,
-    });
+
+    if (type === 'cart') {
+      addCart({
+        productId: product.id,
+        quantity: quantity,
+        amount: product.price * quantity,
+      });
+    }
   };
 
   const { product } = props;
