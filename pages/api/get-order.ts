@@ -22,7 +22,7 @@ async function getCart(userId: string) {
       let orderItems: OrderItem[] = [];
       for (const id of order.orderItemIds.split(',').map(item => Number(item))) {
         const res: OrderItem[] =
-          await prisma.$queryRaw`SELECT i.id , quantity, amount, i.price, name, image_url, productId FROM OrdersItem as i JOIN products as p ON i.productId = p.id WHERE i.id =${id}`;
+          await prisma.$queryRaw`SELECT i.id , quantity, amount, i.price, name, image_url, productId FROM OrderItem as i JOIN products as p ON i.productId = p.id WHERE i.id =${id}`;
         orderItems.push.apply(orderItems, res);
       }
 
