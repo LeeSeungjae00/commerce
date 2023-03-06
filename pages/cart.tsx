@@ -2,7 +2,7 @@ import CountControl from '@/components/CountControl';
 import ProductList from '@/components/ProductList';
 import styled from '@emotion/styled';
 import { Button } from '@mantine/core';
-import { Cart as CartType, products } from '@prisma/client';
+import { Cart as CartType, OrderItem, products } from '@prisma/client';
 import { IconRefresh, IconShoppingCartOff, IconX } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORY_MAP, TAKE } from 'constants/products';
@@ -10,6 +10,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
+import { ORDER_QUERY_KEY } from './my';
 
 interface CartItem extends CartType {
   name: string;
@@ -21,10 +22,27 @@ export const CART_QUERYKEY = `/api/get-cart`;
 
 export default function Cart() {
   const session = useSession();
+  const queryClient = useQueryClient();
   const { data, isLoading } = useQuery<{ items: [] }, unknown, CartItem[]>([CART_QUERYKEY], () =>
     fetch(CART_QUERYKEY)
       .then(res => res.json())
       .then(res => res.items),
+  );
+
+  const { mutate: addOrder } = useMutation<unknown, unknown, Omit<OrderItem, 'id'>[], any>(
+    items =>
+      fetch(`/api/add-order`, {
+        method: 'POST',
+        body: JSON.stringify({ items }),
+      }).then(data => data.json().then(res => res.items)),
+    {
+      onMutate: () => {
+        queryClient.invalidateQueries([ORDER_QUERY_KEY]);
+      },
+      onSuccess: () => {
+        router.push('/my');
+      },
+    },
   );
 
   const dilveryAmount = data && data.length > 0 ? 5000 : 0;
@@ -46,7 +64,15 @@ export default function Cart() {
 
   const handleOrder = () => {
     // TODO: 구매하기 기능 구현
-    alert(`장바구니 구매 ${JSON.stringify(data)}`);
+    if (!data) return;
+    addOrder(
+      data?.map(cart => ({
+        productId: cart.productId,
+        price: cart.price,
+        amount: cart.amount,
+        quantity: cart.quantity,
+      })),
+    );
   };
 
   return (
