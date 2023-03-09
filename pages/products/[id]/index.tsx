@@ -3,7 +3,7 @@ import CustomEditor from '@/components/Editor';
 import { Button } from '@mantine/core';
 import { Cart, OrderItem, products } from '@prisma/client';
 import { IconHeart, IconHeartBroken, IconHeartFilled, IconHeartbeat, IconShoppingCart } from '@tabler/icons-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { CATEGORY_MAP } from 'constants/products';
 import { format } from 'date-fns';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';

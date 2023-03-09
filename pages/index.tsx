@@ -5,9 +5,10 @@ import { Input, Pagination, SegmentedControl, SegmentedControlItem, Select } fro
 import { CATEGORY_MAP, FILTERS, TAKE } from 'constants/products';
 import { IconSearch } from '@tabler/icons-react';
 import useDebounce from 'hooks/useDebounce';
-import { useQuery } from '@tanstack/react-query';
+// import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import ProductList from '@/components/ProductList';
+import { useQuery } from 'react-query';
 
 export default function Home() {
   const router = useRouter();

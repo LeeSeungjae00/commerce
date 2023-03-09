@@ -1,6 +1,6 @@
 import ProductList from '@/components/ProductList';
 import { products } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from 'react-query';
 
 export default function WishList() {
   const { data: products } = useQuery<{ items: products[] }, unknown, products[]>(

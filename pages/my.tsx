@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { Badge, Button } from '@mantine/core';
 import { Cart as CartType, OrderItem, Orders, products } from '@prisma/client';
 import { IconRefresh, IconShoppingCartOff, IconX } from '@tabler/icons-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { CATEGORY_MAP, TAKE } from 'constants/products';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
