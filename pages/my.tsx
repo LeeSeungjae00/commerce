@@ -76,13 +76,55 @@ export default function MyPage() {
 }
 
 const DetailItem = (props: OrderDetail) => {
+  const queryClient = useQueryClient();
+  const { mutate: updateOrderStatus } = useMutation<unknown, unknown, number, any>(
+    status =>
+      fetch(`/api/update-order-status`, {
+        method: 'POST',
+        body: JSON.stringify({ id: props.id, status, userId: props.userId }),
+      }).then(data => data.json().then(res => res.items)),
+    {
+      onMutate: async status => {
+        await queryClient.cancelQueries({ queryKey: [ORDER_QUERY_KEY] });
+
+        const previous = queryClient.getQueryData([ORDER_QUERY_KEY]);
+
+        queryClient.setQueryData<CartType[]>(
+          [ORDER_QUERY_KEY],
+          old =>
+            old?.map(c => {
+              if (c.id === props.id) {
+                return { ...c, status };
+              }
+              return c;
+            }) || [],
+        );
+
+        return { previous };
+      },
+      onError: (error, _, context) => {
+        queryClient.setQueriesData([ORDER_QUERY_KEY], context.previous);
+      },
+      onSuccess: data => {
+        queryClient.invalidateQueries([ORDER_QUERY_KEY]);
+      },
+    },
+  );
+
+  const handlePayment = () => {
+    updateOrderStatus(5);
+  };
+
+  const handleCancel = () => {
+    updateOrderStatus(-1);
+  };
   return (
     <div className="flex w-full p-4 border-2 flex-col">
       <div className="flex">
-        <Badge color={props.status === 0 ? 'res' : ''} className="mb-2">
+        <Badge color={props.status < 1 ? 'red' : ''} className="mb-2">
           {ORDER_STATUS_MAP[props.status + 1]}
         </Badge>
-        <IconX className="ml-auto"></IconX>
+        <IconX className="ml-auto" onClick={handleCancel}></IconX>
       </div>
       {props.orderItems.map((orderItem, idx) => (
         <Item key={idx} {...orderItem}></Item>
@@ -105,7 +147,9 @@ const DetailItem = (props: OrderDetail) => {
             </span>
           </span>
           <span className="text-zinc-400 mt-auto mb-auto">주문일자: {format(new Date(props.createAt), 'yyyy년 M월 d일')}</span>
-          <Button style={{ backgroundColor: 'black', color: 'white' }}>결제 처리</Button>
+          <Button style={{ backgroundColor: 'black', color: 'white' }} onClick={handlePayment}>
+            결제 처리
+          </Button>
         </div>
       </div>
     </div>

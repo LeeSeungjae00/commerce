@@ -176,13 +176,15 @@ const Item = (props: CartItem) => {
 
         const previous = queryClient.getQueryData([CART_QUERYKEY]);
 
-        queryClient.setQueryData<CartType[]>([CART_QUERYKEY], old =>
-          old?.map(c => {
-            if (c.id !== item.id) {
-              return c;
-            }
-            return item;
-          }),
+        queryClient.setQueryData<CartType[]>(
+          [CART_QUERYKEY],
+          old =>
+            old?.map(c => {
+              if (c.id !== item.id) {
+                return c;
+              }
+              return item;
+            }) || [],
         );
 
         return { previous };
@@ -208,7 +210,7 @@ const Item = (props: CartItem) => {
 
         const previous = queryClient.getQueryData([CART_QUERYKEY]);
 
-        queryClient.setQueryData<CartType[]>([CART_QUERYKEY], old => old?.filter(c => c.id !== id));
+        queryClient.setQueryData<CartType[]>([CART_QUERYKEY], old => old?.filter(c => c.id !== id) || []);
 
         return { previous };
       },
