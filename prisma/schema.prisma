@@ -111,3 +111,13 @@ model Orders {
   createAt DateTime @default(now())
   status Int
 }
+
+model Comment {
+  id Int @id @default(autoincrement())
+  userId String
+  orderItemId Int @unique
+  rate Int
+  contents String?
+  images String?
+  updateAt DateTime @updatedAt
+}
