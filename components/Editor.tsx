@@ -18,7 +18,7 @@ interface CustomEditorInterface {
 
 export default function CustomEditor({ editorState, readOnly = false, onSave, onEditorStateChange }: CustomEditorInterface) {
   return (
-    <Wrapper>
+    <Wrapper readOnly={readOnly}>
       <Editor
         readOnly={readOnly}
         toolbarHidden={readOnly}
@@ -39,6 +39,7 @@ export default function CustomEditor({ editorState, readOnly = false, onSave, on
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ readOnly: boolean }>`
   padding: 16px;
+  ${props => (props.readOnly ? '' : 'border : 1px solid black; border-radius : 8px')}
 `;
