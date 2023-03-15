@@ -185,7 +185,7 @@ const Item = (props: OrderItemDetail & { status: number }) => {
         {props.status === 5 && (
           <Button style={{ backgroundColor: 'black', color: 'white', marginTop: 'auto' }} onClick={handleComment}>
             {' '}
-            후가 작성
+            후기 작성
           </Button>
         )}
       </div>
