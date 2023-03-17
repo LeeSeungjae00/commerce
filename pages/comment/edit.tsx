@@ -1,4 +1,5 @@
 import CustomEditor from '@/components/Editor';
+import { Slider } from '@mantine/core';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -11,9 +12,8 @@ export default function CommentEdit() {
   const [editorState, setEditorState] = useState<EditorState | undefined>(undefined);
 
   useEffect(() => {
-    console.log(orderItemId);
     if (orderItemId) {
-      fetch(`/api/get-comment?id=${orderItemId}`)
+      fetch(`/api/get-comment?orderItemId=${orderItemId}`)
         .then(res => res.json())
         .then(res => {
           if (res.items.contents) {
@@ -32,7 +32,7 @@ export default function CommentEdit() {
       fetch(`/api/update-comment`, {
         method: 'POST',
         body: JSON.stringify({
-          orderItemId,
+          orderItemId: Number(orderItemId),
           rate,
           contents: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
         }),
@@ -40,8 +40,22 @@ export default function CommentEdit() {
         .then(res => res.json())
         .then(res => {
           alert('저장 성공');
+          router.back();
         });
     }
   };
-  return <>{editorState != null && <CustomEditor editorState={editorState} onEditorStateChange={setEditorState} onSave={handleSave} />}</>;
+  return (
+    <>
+      {editorState != null && <CustomEditor editorState={editorState} onEditorStateChange={setEditorState} onSave={handleSave} />}
+      <Slider
+        value={rate}
+        onChange={setRate}
+        defaultValue={5}
+        min={1}
+        max={5}
+        step={1}
+        marks={[{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }, { value: 5 }]}
+      />
+    </>
+  );
 }
