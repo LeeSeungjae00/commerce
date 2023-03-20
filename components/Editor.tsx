@@ -14,11 +14,12 @@ interface CustomEditorInterface {
   readOnly?: boolean;
   onEditorStateChange?: Dispatch<SetStateAction<EditorState | undefined>>;
   onSave?: () => void;
+  noPadding?: boolean;
 }
 
-export default function CustomEditor({ editorState, readOnly = false, onSave, onEditorStateChange }: CustomEditorInterface) {
+export default function CustomEditor({ editorState, readOnly = false, onSave, onEditorStateChange, noPadding = false }: CustomEditorInterface) {
   return (
-    <Wrapper readOnly={readOnly}>
+    <Wrapper readOnly={readOnly} noPadding={noPadding}>
       <Editor
         readOnly={readOnly}
         toolbarHidden={readOnly}
@@ -39,7 +40,7 @@ export default function CustomEditor({ editorState, readOnly = false, onSave, on
   );
 }
 
-const Wrapper = styled.div<{ readOnly: boolean }>`
-  padding: 16px;
+const Wrapper = styled.div<{ readOnly: boolean; noPadding: boolean }>`
+  ${props => (props.noPadding ? '' : 'padding: 16px')};
   ${props => (props.readOnly ? '' : 'border : 1px solid black; border-radius : 8px')}
 `;

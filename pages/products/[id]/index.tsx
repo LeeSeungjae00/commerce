@@ -1,7 +1,7 @@
 import CountControl from '@/components/CountControl';
 import CustomEditor from '@/components/Editor';
 import { Button } from '@mantine/core';
-import { Cart, OrderItem, products } from '@prisma/client';
+import { Cart, Comment, OrderItem, products } from '@prisma/client';
 import { IconHeart, IconHeartBroken, IconHeartFilled, IconHeartbeat, IconShoppingCart } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { CATEGORY_MAP } from 'constants/products';
@@ -16,20 +16,30 @@ import { CART_QUERYKEY } from 'pages/cart';
 import { ORDER_QUERY_KEY } from 'pages/my';
 import React, { useEffect, useState } from 'react';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import CommentItem from '@/components/CommentItem';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const product = await fetch(`http://localhost:3737/api/get-product?id=${context.params?.id}`)
     .then(res => res.json())
     .then(res => res.items);
 
+  const comments = await fetch(`http://localhost:3737/api/get-comments?productId=${context.params?.id}`)
+    .then(res => res.json())
+    .then(res => res.items);
+
   return {
-    props: { product: { ...product, images: [product.image_url, product.image_url] } },
+    props: {
+      product: { ...product, images: [product.image_url, product.image_url] },
+      comments,
+    },
   };
 }
 
 const WISHLIST_QUERYKEY = '/api/get-wishlist';
 
-export default function Product(props: { product: products & { images: string[] } }) {
+export interface CommentItemType extends Comment, OrderItem {}
+
+export default function Product(props: { product: products & { images: string[] }; comments: CommentItemType[] }) {
   const [index, setIndex] = useState(0);
   const { data: session } = useSession();
   const [quantity, setQintity] = useState<number | undefined>(1);
@@ -175,6 +185,10 @@ export default function Product(props: { product: products & { images: string[] 
                 ))}
               </div>
               {editorState != null && <CustomEditor editorState={editorState} readOnly></CustomEditor>}
+              <div>
+                <p className="test-2xl font-semibold">후기</p>
+                {props.comments && props.comments.map((comment, idx) => <CommentItem key={idx} item={comment} />)}
+              </div>
             </div>
             <div style={{ maxWidth: 600 }} className="flex flex-col space-y-6">
               <div className="text-lg text-zinc-400">{CATEGORY_MAP[product.category_id - 1]}</div>
