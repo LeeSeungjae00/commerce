@@ -24,10 +24,12 @@ async function getComments(productId: number) {
           orderItemId: orderItem.id,
         },
       });
-      response.push({
-        ...orderItem,
-        ...res,
-      });
+      if (res) {
+        response.push({
+          ...orderItem,
+          ...res,
+        });
+      }
     }
 
     return response;
