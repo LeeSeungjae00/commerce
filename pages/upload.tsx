@@ -1,3 +1,4 @@
+import AutoSizeImage from '@/components/AutoSizeImageWrapper';
 import Button from '@/components/Button';
 import styled from '@emotion/styled';
 import Image from 'next/image';
@@ -32,18 +33,7 @@ export default function ImageUpload() {
     <div>
       <input type="file" accept="image/*" ref={inputRef}></input>
       <Button onClick={handleUpload}>업로드</Button>
-      {image !== '' && (
-        <AutoSizeIamgeWrapper>
-          <Image src={image} alt="" width={200} height={200}></Image>
-        </AutoSizeIamgeWrapper>
-      )}
+      {image !== '' && <AutoSizeImage src={image}></AutoSizeImage>}
     </div>
   );
 }
-
-const AutoSizeIamgeWrapper = styled.div`
-  width: 200px;
-  height: 200px;
-  position: relative;
-  overflow: hidden;
-`;
