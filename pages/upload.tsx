@@ -1,7 +1,5 @@
 import AutoSizeImage from '@/components/AutoSizeImageWrapper';
 import Button from '@/components/Button';
-import styled from '@emotion/styled';
-import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 export default function ImageUpload() {

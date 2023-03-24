@@ -1,8 +1,7 @@
-import React, { ChangeEventHandler, useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { categories, products } from '@prisma/client';
-import Image from 'next/image';
 import { Input, Pagination, SegmentedControl, SegmentedControlItem, Select } from '@mantine/core';
-import { CATEGORY_MAP, FILTERS, TAKE } from 'constants/products';
+import { FILTERS, TAKE } from 'constants/products';
 import { IconSearch } from '@tabler/icons-react';
 import useDebounce from 'hooks/useDebounce';
 // import { useQuery } from 'react-query';
