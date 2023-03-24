@@ -19,11 +19,11 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import CommentItem from '@/components/CommentItem';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const product = await fetch(`http://localhost:3737/api/get-product?id=${context.params?.id}`)
+  const product = await fetch(`${process.env.NEXTAUTH_URL}/api/get-product?id=${context.params?.id}`)
     .then(res => res.json())
     .then(res => res.items);
 
-  const comments = await fetch(`http://localhost:3737/api/get-comments?productId=${context.params?.id}`)
+  const comments = await fetch(`${process.env.NEXTAUTH_URL}/api/get-comments?productId=${context.params?.id}`)
     .then(res => res.json())
     .then(res => res.items);
 
