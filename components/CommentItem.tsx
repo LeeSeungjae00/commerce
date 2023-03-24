@@ -4,6 +4,7 @@ import { CommentItemType } from 'pages/products/[id]';
 import CustomEditor from './Editor';
 import { EditorState, convertFromRaw } from 'draft-js';
 import { format } from 'date-fns';
+import AutoSizeImage from './AutoSizeImageWrapper';
 
 export default function CommentItem({ item }: { item: CommentItemType }) {
   return (
@@ -20,6 +21,11 @@ export default function CommentItem({ item }: { item: CommentItemType }) {
         {item.price.toLocaleString('ko-kr')}원 * {item.quantity}개 = {item.amount.toLocaleString('ko-kr')}원
       </span>
       {item.contents && <CustomEditor noPadding readOnly editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(item.contents)))}></CustomEditor>}
+      <div className="flex gap-1">
+        {item.images?.split(',').map((image, idx) => (
+          <AutoSizeImage size={100} src={image} key={idx}></AutoSizeImage>
+        ))}
+      </div>
     </Wrapper>
   );
 }

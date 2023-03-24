@@ -6,7 +6,19 @@ import { authOptions } from './auth/[...nextauth]';
 
 const prisma = new PrismaClient();
 
-async function updateComment({ userId, orderItemId, rate, contents }: { userId: string; orderItemId: number; rate: number; contents: string }) {
+async function updateComment({
+  userId,
+  orderItemId,
+  rate,
+  contents,
+  images,
+}: {
+  userId: string;
+  orderItemId: number;
+  rate: number;
+  contents: string;
+  images: string;
+}) {
   try {
     const response = await prisma.comment.upsert({
       where: {
@@ -15,12 +27,14 @@ async function updateComment({ userId, orderItemId, rate, contents }: { userId: 
       update: {
         contents,
         rate,
+        images,
       },
       create: {
         userId,
         orderItemId,
         contents,
         rate,
+        images,
       },
     });
 
@@ -37,7 +51,7 @@ type res = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<res>) {
   const session: any = await unstable_getServerSession(req, res, authOptions);
-  const { orderItemId, rate, contents } = JSON.parse(req.body);
+  const { orderItemId, rate, contents, images } = JSON.parse(req.body);
 
   if (session == null) {
     res.status(200).json({ items: [], message: `no Session` });
@@ -50,6 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       orderItemId: Number(orderItemId),
       rate,
       contents,
+      images,
     });
     res.status(200).json({ items: wishlist, message: `Success` });
   } catch (error) {
