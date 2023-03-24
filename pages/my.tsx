@@ -1,11 +1,9 @@
 import CountControl from '@/components/CountControl';
-import ProductList from '@/components/ProductList';
 import styled from '@emotion/styled';
 import { Badge, Button } from '@mantine/core';
-import { Cart as CartType, OrderItem, Orders, products } from '@prisma/client';
-import { IconRefresh, IconShoppingCartOff, IconX } from '@tabler/icons-react';
+import { Cart as CartType, OrderItem, Orders } from '@prisma/client';
+import { IconShoppingCartOff, IconX } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { CATEGORY_MAP, TAKE } from 'constants/products';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';

@@ -2,7 +2,7 @@ import CountControl from '@/components/CountControl';
 import CustomEditor from '@/components/Editor';
 import { Button } from '@mantine/core';
 import { Cart, Comment, OrderItem, products } from '@prisma/client';
-import { IconHeart, IconHeartBroken, IconHeartFilled, IconHeartbeat, IconShoppingCart } from '@tabler/icons-react';
+import { IconHeart, IconHeartFilled, IconShoppingCart } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { CATEGORY_MAP } from 'constants/products';
 import { format } from 'date-fns';
