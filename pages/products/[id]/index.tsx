@@ -17,6 +17,7 @@ import { ORDER_QUERY_KEY } from 'pages/my';
 import React, { useEffect, useState } from 'react';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import CommentItem from '@/components/CommentItem';
+import Head from 'next/head';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const product = await fetch(`${process.env.NEXTAUTH_URL}/api/get-product?id=${context.params?.id}`)
@@ -155,6 +156,10 @@ export default function Product(props: { product: products & { images: string[] 
       {product != null && productId != null ? (
         <>
           <div className="flex flex-row">
+            <Head>
+              <title>{product.name}</title>
+              <meta name="description" content="lsj 연습용 commerce service"></meta>
+            </Head>
             <div style={{ maxWidth: 600, marginRight: 52 }}>
               <Carousel animation="fade" withoutControls wrapAround speed={10} slideIndex={index}>
                 {product.images.map((url, idx) => (
