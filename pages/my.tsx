@@ -1,16 +1,13 @@
 import CountControl from '@/components/CountControl';
-import ProductList from '@/components/ProductList';
-import styled from '@emotion/styled';
 import { Badge, Button } from '@mantine/core';
-import { Cart as CartType, OrderItem, Orders, products } from '@prisma/client';
-import { IconRefresh, IconShoppingCartOff, IconX } from '@tabler/icons-react';
+import { Cart as CartType, OrderItem, Orders } from '@prisma/client';
+import { IconShoppingCartOff, IconX } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { CATEGORY_MAP, TAKE } from 'constants/products';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface OrderItemDetail extends OrderItem {
   name: string;
@@ -102,10 +99,10 @@ const DetailItem = (props: OrderDetail) => {
 
         return { previous };
       },
-      onError: (error, _, context) => {
+      onError: (_error, _, context) => {
         queryClient.setQueriesData([ORDER_QUERY_KEY], context.previous);
       },
-      onSuccess: data => {
+      onSuccess: () => {
         queryClient.invalidateQueries([ORDER_QUERY_KEY]);
       },
     },
@@ -192,10 +189,3 @@ const Item = (props: OrderItemDetail & { status: number }) => {
     </div>
   );
 };
-
-const Row = styled.div`
-  display: flex;
-  * ~ * {
-    margin-left: auto;
-  }
-`;
