@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://example</loc><lastmod>2023-03-09T01:45:32.006Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://example/auth/google</loc><lastmod>2023-03-09T01:45:32.006Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://example/auth/login</loc><lastmod>2023-03-09T01:45:32.006Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://example/cart</loc><lastmod>2023-03-09T01:45:32.006Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://example/my</loc><lastmod>2023-03-09T01:45:32.006Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://example/products</loc><lastmod>2023-03-09T01:45:32.006Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://example/products/page</loc><lastmod>2023-03-09T01:45:32.006Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://example/wishlist</loc><lastmod>2023-03-09T01:45:32.006Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example/auth/login</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example/cart</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example/comment/edit</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example/my</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example/products</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example/products/page</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example/upload</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://example/wishlist</loc><lastmod>2023-03-27T04:51:24.716Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>

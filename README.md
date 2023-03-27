@@ -1,38 +1,62 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 프로젝트 목적
 
-## Getting Started
+Next.js 의 활용 능숙도를 늘리고 여러가지 최신 기술들을 사용해보며 나의 기술로 만드는 것, 커머스 서비스 구축하며 커머스 서비스에 대한 이해도 증대
 
-First, run the development server:
+# 요구사항
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## 회원
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- OAuth
+- My Page (구매 목록)
+- 찜하기
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## 상품
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- 목록 조회
+- 상세 조회
+- 구매
+- 장바군티 추가
+- 상품 목록중 구매
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## 게시판
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- 후기 작성
+- 후기 표출
 
-## Learn More
+# 프로젝트 기술 스택
 
-To learn more about Next.js, take a look at the following resources:
+## core
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Next.js
+- Typescript
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## formatting
 
-## Deploy on Vercel
+- eslint
+- prettier
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Author
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- lint-staged
+- husky
+
+## 비동기 통신
+
+- react-query
+
+## DB
+
+- prisma
+
+## SEO
+
+- sitemap
+
+## 스타일링
+
+- emotion
+- TailwindCSS
+
+## deploy
+
+-vecel
