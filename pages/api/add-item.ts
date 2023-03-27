@@ -11,7 +11,7 @@ const databaseId = '93bb7f3a391d4550aef6e467a7659081';
 
 async function addItem(name: string) {
   try {
-    const response = await notion.pages.create({
+    await notion.pages.create({
       parent: { database_id: databaseId },
       properties: {
         title: [

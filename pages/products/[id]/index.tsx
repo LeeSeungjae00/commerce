@@ -2,19 +2,19 @@ import CountControl from '@/components/CountControl';
 import CustomEditor from '@/components/Editor';
 import { Button } from '@mantine/core';
 import { Cart, Comment, OrderItem, products } from '@prisma/client';
-import { IconHeart, IconHeartBroken, IconHeartFilled, IconHeartbeat, IconShoppingCart } from '@tabler/icons-react';
+import { IconHeart, IconHeartFilled, IconShoppingCart } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { CATEGORY_MAP } from 'constants/products';
 import { format } from 'date-fns';
-import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { EditorState, convertFromRaw } from 'draft-js';
+import { GetServerSidePropsContext } from 'next';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Carousel from 'nuka-carousel';
 import { CART_QUERYKEY } from 'pages/cart';
 import { ORDER_QUERY_KEY } from 'pages/my';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import CommentItem from '@/components/CommentItem';
 import Head from 'next/head';
@@ -81,7 +81,7 @@ export default function Product(props: { product: products & { images: string[] 
 
         return { previous };
       },
-      onError: (error, _, context) => {
+      onError: (_error, _, context) => {
         queryClient.setQueriesData([WISHLIST_QUERYKEY], context.previous);
       },
       onSuccess: () => {

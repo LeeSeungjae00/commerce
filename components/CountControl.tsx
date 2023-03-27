@@ -1,4 +1,4 @@
-import { useState, useRef, Dispatch, SetStateAction } from 'react';
+import { useRef, Dispatch, SetStateAction } from 'react';
 import { NumberInput, Group, ActionIcon, NumberInputHandlers } from '@mantine/core';
 
 interface CountControlType {

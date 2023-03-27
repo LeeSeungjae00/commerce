@@ -66,7 +66,7 @@ export default function CommentEdit() {
         }),
       })
         .then(res => res.json())
-        .then(res => {
+        .then(() => {
           alert('저장 성공');
           router.back();
         });

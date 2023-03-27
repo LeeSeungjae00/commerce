@@ -69,7 +69,7 @@ export default function Products() {
         }),
       })
         .then(res => res.json())
-        .then(res => {
+        .then(() => {
           alert('저장 성공');
         });
     }
