@@ -5,7 +5,6 @@ import { Button } from '@mantine/core';
 import { Cart as CartType, OrderItem, products } from '@prisma/client';
 import { IconRefresh, IconShoppingCartOff, IconX } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { CATEGORY_MAP, TAKE } from 'constants/products';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -189,17 +188,17 @@ const Item = (props: CartItem) => {
 
         return { previous };
       },
-      onError: (error, _, context) => {
+      onError: (_error, _, context) => {
         queryClient.setQueriesData([CART_QUERYKEY], context.previous);
       },
-      onSuccess: data => {
+      onSuccess: () => {
         queryClient.invalidateQueries([CART_QUERYKEY]);
       },
     },
   );
 
   const { mutate: deleteCart } = useMutation<unknown, unknown, number, any>(
-    item =>
+    () =>
       fetch(`/api/delete-cart`, {
         method: 'POST',
         body: JSON.stringify({ id: props.id }),
@@ -214,10 +213,10 @@ const Item = (props: CartItem) => {
 
         return { previous };
       },
-      onError: (error, _, context) => {
+      onError: (_error, _, context) => {
         queryClient.setQueriesData([CART_QUERYKEY], context.previous);
       },
-      onSuccess: data => {
+      onSuccess: () => {
         queryClient.invalidateQueries([CART_QUERYKEY]);
       },
     },

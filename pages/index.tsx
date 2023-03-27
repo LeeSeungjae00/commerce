@@ -5,12 +5,10 @@ import { FILTERS, TAKE } from 'constants/products';
 import { IconSearch } from '@tabler/icons-react';
 import useDebounce from 'hooks/useDebounce';
 // import { useQuery } from 'react-query';
-import { useRouter } from 'next/router';
 import ProductList from '@/components/ProductList';
 import { useQuery } from 'react-query';
 
 export default function Home() {
-  const router = useRouter();
   const [activePage, setPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string>('-1');
   const [selectedFilter, setFilter] = useState<string | null>(FILTERS[0].value);

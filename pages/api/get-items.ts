@@ -31,9 +31,7 @@ type res = {
   message: string;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<res>) {
-  const { name } = req.query;
-
+export default async function handler(_: NextApiRequest, res: NextApiResponse<res>) {
   try {
     const response = await getItems();
     res.status(200).json({ items: response?.results, message: `Success` });
