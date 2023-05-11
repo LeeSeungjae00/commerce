@@ -24,6 +24,9 @@ export const authOptions: NextAuthOptions = {
       session.id = user.id;
       return Promise.resolve(session);
     },
+    redirect: async ({ url, baseUrl }) => {
+      return baseUrl;
+    },
   },
 };
 
